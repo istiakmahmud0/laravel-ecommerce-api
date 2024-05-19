@@ -2,7 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\RepositoryInterface\AuthRepositoryInterface;
+use App\Interfaces\AuthRepositoryInterface;
+
 
 
 

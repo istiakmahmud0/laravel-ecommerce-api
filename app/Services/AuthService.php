@@ -1,8 +1,8 @@
 <?php
 
-use App\Interfaces\ServiceInterfaces\AuthServiceInterface;
+namespace App\Services;
 
-class AuthService implements AuthServiceInterface
+class AuthService
 {
     public function __construct()
     {
