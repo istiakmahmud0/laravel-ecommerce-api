@@ -6,7 +6,7 @@ use App\Interfaces\AuthRepositoryInterface;
 use App\Repositories\AuthRepository;
 use Illuminate\Support\ServiceProvider;
 
-class ServiceRepositoryProvider extends ServiceProvider
+class RepositoryServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
