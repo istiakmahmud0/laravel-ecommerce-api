@@ -34,23 +34,36 @@ class AuthRepository implements AuthRepositoryInterface
         }
     }
 
-
-    public function refresh(array $data): array
+    public function register(array $userData): User
     {
-        $refreshToken = $data['refresh_token'];
+        $userData['password'] = bcrypt($userData['password']);
+        $userData['email_verified_at'] = now();
+        $user = $this->model->create($userData);
+        $userData['accessToken'] = $user->createToken('API Token')->accessToken;
 
-        $response = Http::asForm()->post(config('services.passport.token_url'), [
-            'grant_type' => 'refresh_token',
-            'refresh_token' => $refreshToken,
-            'client_id' => config('services.passport.client_id'),
-            'client_secret' => config('services.passport.client_secret'),
-            'scope' => '',
-        ]);
+        return $user;
+    }
 
-        if ($response->successful()) {
-            return $response->json();
-        }
+    // public function refresh(array $data): array
+    // {
+    //     $refreshToken = $data['refresh_token'];
 
-        return ['error' => 'Invalid refresh token'];
+    //     $response = Http::asForm()->post(config('services.passport.token_url'), [
+    //         'grant_type' => 'refresh_token',
+    //         'refresh_token' => $refreshToken,
+    //         'client_id' => config('services.passport.client_id'),
+    //         'client_secret' => config('services.passport.client_secret'),
+    //         'scope' => '',
+    //     ]);
+
+    //     if ($response->successful()) {
+    //         return $response->json();
+    //     }
+
+    //     return ['error' => 'Invalid refresh token'];
+    // }
+    public function logout(): void
+    {
+        Auth::user()->tokens()->delete();
     }
 }

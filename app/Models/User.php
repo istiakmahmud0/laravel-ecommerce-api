@@ -18,6 +18,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+
+    // Ensure the model points to the 'users' table
+
     protected $fillable = [
         'name',
         'email',
