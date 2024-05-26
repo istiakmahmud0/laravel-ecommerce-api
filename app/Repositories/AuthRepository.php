@@ -6,6 +6,9 @@ use App\Http\Resources\RoleResource;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Laravel\Passport\RefreshToken;
+use Laravel\Passport\Token;
 
 class AuthRepository implements AuthRepositoryInterface
 {
@@ -23,12 +26,31 @@ class AuthRepository implements AuthRepositoryInterface
 
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = Auth::user();
-            // $user['role'] = new RoleResource($user->roles->first());
-            $user['accessToken'] = $user->createToken('MyApp')->accessToken;
             $user['role'] = new RoleResource($user->roles->first());
+            $user['accessToken'] = $user->createToken('MyApp')->accessToken;
             return $user;
         } else {
             return null;
         }
+    }
+
+
+    public function refresh(array $data): array
+    {
+        $refreshToken = $data['refresh_token'];
+
+        $response = Http::asForm()->post(config('services.passport.token_url'), [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $refreshToken,
+            'client_id' => config('services.passport.client_id'),
+            'client_secret' => config('services.passport.client_secret'),
+            'scope' => '',
+        ]);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return ['error' => 'Invalid refresh token'];
     }
 }

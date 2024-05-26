@@ -11,4 +11,10 @@ interface AuthRepositoryInterface
      */
 
     public function login(string $email, string $password): User|null;
+
+    /**
+     * User refresh token
+     */
+
+    public function refresh(array $data): array;
 }
