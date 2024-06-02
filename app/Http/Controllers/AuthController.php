@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Interfaces\AuthRepositoryInterface;
-use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
@@ -17,12 +15,10 @@ class AuthController extends Controller
     /**
      * AuthController constructor
      */
-    public function __construct(protected AuthRepositoryInterface $authRepository, protected AuthService $authService)
+    public function __construct(protected AuthService $authService)
     {
-        $authRepository = $this->authRepository;
         $this->authService = $authService;
     }
-
 
 
     /**
@@ -48,10 +44,6 @@ class AuthController extends Controller
             'user' => $user,
         ], 201);
     }
-
-    // public function register()
-    // {
-    // }
 
 
     // public function refresh(Request $request)

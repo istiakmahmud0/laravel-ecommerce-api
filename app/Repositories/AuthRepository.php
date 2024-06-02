@@ -62,6 +62,9 @@ class AuthRepository implements AuthRepositoryInterface
 
     //     return ['error' => 'Invalid refresh token'];
     // }
+
+
+
     public function logout(): void
     {
         Auth::user()->tokens()->delete();
