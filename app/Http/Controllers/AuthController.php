@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
@@ -46,15 +47,24 @@ class AuthController extends Controller
     }
 
 
-    // public function refresh(Request $request)
-    // {
-    //     $data = $request->validate([
-    //         'refresh_token' => 'required|string',
-    //     ]);
+    /**
+     * User password reset
+     */
+    public function passwordReset(ResetPasswordRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+        $updatePassword = $this->authService->resetPassword($validated['password'], $validated['old_password']);
+        if ($updatePassword) {
+            return Response::sendResponse('Password has been changed successfully', [], 201);
+        } else {
+            return Response::sendError('Old password doesn\'t match.', [], 200);
+        }
+    }
 
-    //     return response()->json($this->authService->refresh($data));
-    // }
 
+    /**
+     * User logout
+     */
     public function logout(): JsonResponse
     {
         $this->authService->logout();
