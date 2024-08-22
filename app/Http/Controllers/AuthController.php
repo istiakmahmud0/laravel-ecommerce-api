@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
@@ -61,6 +62,10 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Forget password
+     */
+    public function forgetPassword(ForgetPasswordRequest $request) {}
 
     /**
      * User logout
