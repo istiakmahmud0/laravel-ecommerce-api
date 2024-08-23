@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\changePasswordRequest;
 use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Mail\ForgetMail;
+use App\Models\PasswordReset;
+use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -65,7 +72,50 @@ class AuthController extends Controller
     /**
      * Forget password
      */
-    public function forgetPassword(ForgetPasswordRequest $request) {}
+    public function forgetPassword(ForgetPasswordRequest $request)
+    {
+        $email = $request->email;
+        if (User::where('email', $email)->doesntExist()) {
+            return Response::sendError('Invalid email.', [], 404);
+        }
+        // generate random token
+        $token = Str::random(32);
+        // $hashedToken = bcrypt($token);
+        PasswordReset::create([
+            'email' => $email,
+            'token' => $token
+        ]);
+        // Mail send to user
+        Mail::to($email)->send(new ForgetMail($token));
+        return Response::sendResponse('Password reset email has been sent your email', [], 200);
+    }
+
+    public function changePassword(ChangePasswordRequest $request, string $resetToken)
+    {
+        // Validate the request
+        $validated = $request->validated();
+
+        // Retrieve the password reset entry based on the email
+        $resetEmail = PasswordReset::where('email', $validated['email'])->first();
+
+
+        // Check if the resetEmail exists and if the token matches
+        if (!$resetEmail || $resetToken !== $resetEmail->token) {
+            return Response::sendError('Invalid email or token.', [], 404);
+        }
+
+        // Update the password
+        $user = User::where('email', $validated['email'])->first();
+        if (!$user) {
+            return Response::sendError('User not found.', [], 404);
+        }
+        // Save the new password
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+        // Delete the password reset record
+        $resetEmail->delete();
+        return Response::sendResponse('Password has been reset', [], 200);
+    }
 
     /**
      * User logout
