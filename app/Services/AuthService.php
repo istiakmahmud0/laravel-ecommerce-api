@@ -34,6 +34,15 @@ class AuthService
         return $this->authRepository->resetPassword($password, $oldPassword);
     }
 
+    public function forgetPassword(string $email): bool
+    {
+        return $this->authRepository->forgetPassword($email);
+    }
+    public function changePassword(string $email, string $password, string $token): bool
+    {
+        return $this->authRepository->changePassword($email, $password, $token);
+    }
+
     public function logout(): void
     {
         $this->authRepository->logout();

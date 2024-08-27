@@ -75,18 +75,21 @@ class AuthController extends Controller
     public function forgetPassword(ForgetPasswordRequest $request)
     {
         $email = $request->email;
-        if (User::where('email', $email)->doesntExist()) {
+        // if (User::where('email', $email)->doesntExist()) {
+        //     return Response::sendError('Invalid email.', [], 404);
+        // }
+        // $token = Str::random(32);
+        // // $hashedToken = bcrypt($token);
+        // PasswordReset::create([
+        //     'email' => $email,
+        //     'token' => $token
+        // ]);
+        // Mail::to($email)->send(new ForgetMail($token));
+        // return Response::sendResponse('Password reset email has been sent your email', [], 200);
+
+        if (!$this->authService->forgetPassword($email)) {
             return Response::sendError('Invalid email.', [], 404);
         }
-        // generate random token
-        $token = Str::random(32);
-        // $hashedToken = bcrypt($token);
-        PasswordReset::create([
-            'email' => $email,
-            'token' => $token
-        ]);
-        // Mail send to user
-        Mail::to($email)->send(new ForgetMail($token));
         return Response::sendResponse('Password reset email has been sent your email', [], 200);
     }
 
@@ -95,26 +98,37 @@ class AuthController extends Controller
         // Validate the request
         $validated = $request->validated();
 
+        // Attempt to change the password using the repository
+        $success = $this->authService->changePassword($validated['email'], $validated['password'], $resetToken);
+
+        if (!$success) {
+            return Response::sendError('Invalid token or email.', [], 400);
+        }
+
+        return Response::sendResponse('Password has been successfully changed.', [], 200);
+
         // Retrieve the password reset entry based on the email
-        $resetEmail = PasswordReset::where('email', $validated['email'])->first();
+        // $resetEmail = PasswordReset::where('email', $validated['email'])->first();
 
 
-        // Check if the resetEmail exists and if the token matches
-        if (!$resetEmail || $resetToken !== $resetEmail->token) {
-            return Response::sendError('Invalid email or token.', [], 404);
-        }
+        // // Check if the resetEmail exists and if the token matches
+        // if (!$resetEmail || $resetToken !== $resetEmail->token) {
+        //     return Response::sendError('Invalid email or token.', [], 404);
+        // }
 
-        // Update the password
-        $user = User::where('email', $validated['email'])->first();
-        if (!$user) {
-            return Response::sendError('User not found.', [], 404);
-        }
-        // Save the new password
-        $user->password = Hash::make($validated['password']);
-        $user->save();
-        // Delete the password reset record
-        $resetEmail->delete();
-        return Response::sendResponse('Password has been reset', [], 200);
+        // // Update the password
+        // $user = User::where('email', $validated['email'])->first();
+        // if (!$user) {
+        //     return Response::sendError('User not found.', [], 404);
+        // }
+        // // Save the new password
+        // $user->password = Hash::make($validated['password']);
+        // $user->save();
+        // // Delete the password reset record
+        // $resetEmail->delete();
+        // return Response::sendResponse('Password has been reset', [], 200);
+
+
     }
 
     /**
