@@ -7,22 +7,35 @@ use App\Models\User;
 interface AuthRepositoryInterface
 {
     /**
+     * User register
+     */
+    public function register(array $userData): User;
+
+    /**
      * User login
      */
 
     public function login(string $email, string $password): User|null;
 
     /**
-     * User register
+     * Reset user password
      */
-    public function register(array $userData): User;
-
+    public function resetPassword(string $password, string $oldPassword): bool;
 
     /**
-     * User refresh token
+     * Forget password
      */
 
-    // public function refresh(array $data): array;
+    public function forgetPassword(string $email): bool;
 
+    /**
+     * Change password
+     */
+
+    public function changePassword(string $email, string $password, string $token): bool;
+
+    /**
+     * Logout user
+     */
     public function logout(): void;
 }

@@ -4,11 +4,16 @@ namespace App\Repositories;
 
 use App\Http\Resources\RoleResource;
 use App\Interfaces\AuthRepositoryInterface;
+use App\Mail\ForgetMail;
+use App\Models\PasswordReset;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
+use Illuminate\Support\Str;
 
 class AuthRepository implements AuthRepositoryInterface
 {
@@ -42,31 +47,71 @@ class AuthRepository implements AuthRepositoryInterface
         $userData['email_verified_at'] = now();
         $user = $this->model->create($userData);
         $userData['accessToken'] = $user->createToken('API Token')->accessToken;
+
         return $user;
     }
 
-    // public function refresh(array $data): array
-    // {
-    //     $refreshToken = $data['refresh_token'];
-
-    //     $response = Http::asForm()->post(config('services.passport.token_url'), [
-    //         'grant_type' => 'refresh_token',
-    //         'refresh_token' => $refreshToken,
-    //         'client_id' => config('services.passport.client_id'),
-    //         'client_secret' => config('services.passport.client_secret'),
-    //         'scope' => '',
-    //     ]);
-
-    //     if ($response->successful()) {
-    //         return $response->json();
-    //     }
-
-    //     return ['error' => 'Invalid refresh token'];
-    // }
-
+    /**
+     * Reset user password
+     */
+    public function resetPassword(string $password, string $oldPassword): bool
+    {
+        $user = $this->model->find(auth()->id());
+        if (Hash::check($oldPassword, $user->password)) {
+            return $user->update(['password' => Hash::make($password)]);
+        } else {
+            return false;
+        }
+    }
 
     /**
-     * Logout
+     * Forget password
+     */
+
+    public function forgetPassword(string $email): bool
+    {
+        if (User::where('email', $email)->doesntExist()) {
+            return false;
+        }
+        // generate random token
+        $token = str::random(32);
+        // $hashedToken = bcrypt($token);
+        PasswordReset::create([
+            'email' => $email,
+            'token' => $token
+        ]);
+        // Mail send to user
+        Mail::to($email)->send(new ForgetMail($token));
+        return true;
+    }
+
+    /**
+     * Change password
+     */
+
+    public function changePassword(string $email, string $password, string $token): bool
+    {
+        // Retrieve the password reset entry based on the email
+        $resetEmail = PasswordReset::where('email', $email)->latest()->first();
+        // Check if the resetEmail exists and if the token matches
+        if (!$resetEmail || $token !== $resetEmail->token) {
+            return false;
+        }
+        // Update the password
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return false;
+        }
+        // Save the new password
+        $user->password = Hash::make($password);
+        $user->save();
+        // Delete the password reset record
+        $resetEmail->delete();
+        return true;
+    }
+
+    /**
+     * Logout user
      */
     public function logout(): void
     {
