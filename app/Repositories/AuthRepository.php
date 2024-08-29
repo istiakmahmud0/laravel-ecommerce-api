@@ -33,14 +33,15 @@ class AuthRepository implements AuthRepositoryInterface
             return null;
         }
     }
-
+    /**
+     * User register
+     */
     public function register(array $userData): User
     {
         $userData['password'] = bcrypt($userData['password']);
         $userData['email_verified_at'] = now();
         $user = $this->model->create($userData);
         $userData['accessToken'] = $user->createToken('API Token')->accessToken;
-
         return $user;
     }
 
@@ -64,7 +65,9 @@ class AuthRepository implements AuthRepositoryInterface
     // }
 
 
-
+    /**
+     * Logout
+     */
     public function logout(): void
     {
         Auth::user()->tokens()->delete();
