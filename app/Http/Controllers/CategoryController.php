@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Interfaces\CategoryRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
-class CategroyController extends Controller
+class CategoryController extends Controller
 {
-
     /**
      * Category controller constructor
      */
-
     public function __construct(protected CategoryRepositoryInterface $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
@@ -28,17 +28,20 @@ class CategroyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $category = $this->categoryRepository->createCategory($request->validated());
+        $categoryImage = null;
+        if ($request->hasFile('category_img')) {
+            $media = $category->addMediaFromRequest('category_img')->toMediaCollection('category_images');
+            $categoryImage = $media->getUrl();
+        }
+        return Response::sendResponse('Category created successfully', ['category' => $category, 'category_img' => $categoryImage], 201);
     }
 
     /**

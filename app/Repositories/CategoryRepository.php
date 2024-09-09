@@ -16,4 +16,13 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         $this->model = $model;
     }
+
+    /**
+     * Create categories
+     */
+
+    public function createCategory(array $categoryDetails): Category
+    {
+        return $this->model->create($categoryDetails);
+    }
 }

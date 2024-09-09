@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CategoryRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +23,10 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categoryId = $this->route('category');
         return [
-            //
+            'category_name' => ['required', 'string', Rule::unique('categories', 'category_name')->ignore($categoryId)],
+            'category_img' => ['required', 'image', 'mimes:png,jpg,jpeg,gif', 'max:2048']
         ];
     }
 }
