@@ -11,11 +11,16 @@ interface CategoryRepositoryInterface
     /**
      * Find all categories
      */
-    // public function getAllCategories(): Collection;
+    public function getAllCategories(?string $relationNames, ?string $collectionNames): Collection;
 
     /**
      * Create categories
      */
 
     public function createCategory(array $categoryDetails): Category;
+
+    /**
+     * Get category by it's id
+     */
+    public function getCategoryById(string $id, ?array $relationNames = null): Category;
 }

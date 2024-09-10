@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Interfaces\CategoryRepositoryInterface;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -20,15 +23,13 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $categories = $this->categoryRepository->getAllCategories('media', 'category_images');
+        return Response::sendResponse('All categories', ['categories' => CategoryResource::collection($categories)], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
+
 
     /**
      * Store a newly created resource in storage.
@@ -42,14 +43,6 @@ class CategoryController extends Controller
             $categoryImage = $media->getUrl();
         }
         return Response::sendResponse('Category created successfully', ['category' => $category, 'category_img' => $categoryImage], 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
