@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
-
     /**
      * Category repository construct
      */
@@ -46,5 +45,21 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $category->when($relationNames, function ($query) use ($relationNames) {
             $query->with($relationNames);
         })->findOrFail($id);
+    }
+
+    /**
+     * Update category
+     */
+    public function updateCategory(object $category, array $newDetails): bool
+    {
+        return $category->update($newDetails);
+    }
+
+    /**
+     * Delete category
+     */
+    public function deleteCategory(object $category): bool
+    {
+        return $category->delete();
     }
 }

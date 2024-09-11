@@ -48,24 +48,39 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $category = $this->categoryRepository->getCategoryById($id, ['media']);
+        return Response::sendResponse('Single category', ['category' => new CategoryResource($category)], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryRequest $request, string $id): JsonResponse
     {
-        //
+        dd($request);
+        $category = $this->categoryRepository->getCategoryById($id);
+        if ($category instanceof Category) {
+            $this->categoryRepository->updateCategory($category, $request->validated());
+        }
+
+        if ($request->hasFile('category_img')) {
+            $category->clearMediaCollection();
+            $category->addMediaFromRequest('category_img')->toMediaCollection('category_images');
+        }
+        return Response::sendResponse('Category updated successfully', ['category' => new CategoryResource($category)], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $category = $this->categoryRepository->getCategoryById($id);
+        if ($category instanceof Category) {
+            $this->categoryRepository->deleteCategory($category);
+        }
+        return Response::sendResponse('Category deleted successfully', [], 200);
     }
 }

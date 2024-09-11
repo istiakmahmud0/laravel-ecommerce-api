@@ -16,11 +16,20 @@ interface CategoryRepositoryInterface
     /**
      * Create categories
      */
-
     public function createCategory(array $categoryDetails): Category;
 
     /**
      * Get category by it's id
      */
     public function getCategoryById(string $id, ?array $relationNames = null): Category;
+
+    /**
+     * Update category
+     */
+    public function updateCategory(object $category, array $newDetails): bool;
+
+    /**
+     * Delete category
+     */
+    public function deleteCategory(object $category): bool;
 }
