@@ -59,7 +59,6 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, string $id): JsonResponse
     {
-        dd($request);
         $category = $this->categoryRepository->getCategoryById($id);
         if ($category instanceof Category) {
             $this->categoryRepository->updateCategory($category, $request->validated());
