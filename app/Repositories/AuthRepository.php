@@ -47,7 +47,6 @@ class AuthRepository implements AuthRepositoryInterface
         $userData['email_verified_at'] = now();
         $user = $this->model->create($userData);
         $userData['accessToken'] = $user->createToken('API Token')->accessToken;
-
         return $user;
     }
 
