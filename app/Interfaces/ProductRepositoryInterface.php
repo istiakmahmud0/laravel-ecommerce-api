@@ -2,4 +2,12 @@
 
 namespace App\Interfaces;
 
-interface ProductRepositoryInterface {}
+use App\Models\Product;
+
+interface ProductRepositoryInterface
+{
+    /**
+     * Create new product
+     */
+    public function createNewProduct(array $productDetails): Product;
+}

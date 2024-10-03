@@ -7,8 +7,9 @@ use App\Interfaces\CategoryRepositoryInterface;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Repositories\AuthRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\ProductRepository;
 use Illuminate\Support\ServiceProvider;
-use ProductRepository;
+
 
 class RepositoryServiceProvider extends ServiceProvider
 {

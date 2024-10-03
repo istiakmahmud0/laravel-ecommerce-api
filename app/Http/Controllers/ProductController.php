@@ -2,10 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
+use App\Interfaces\ProductRepositoryInterface;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    /**
+     * Product controller constructor
+     */
+    public function __construct(protected ProductRepositoryInterface $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -17,17 +30,20 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request): JsonResponse
     {
-        //
+        $product = $this->productRepository->createNewProduct($request->validated());
+        $productImage = null;
+        if ($request->hasFile('product_img')) {
+            $media = $product->addMediaFromRequest('product_img')->toMediaCollection('product_images');
+            $productImage = $media->getUrl();
+        }
+        return Response::sendResponse('Product has been created', ['product' => $product, 'productImage' => $productImage], 201);
     }
 
     /**
