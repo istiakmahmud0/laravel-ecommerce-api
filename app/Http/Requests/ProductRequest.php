@@ -22,7 +22,6 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-<<<<<<< HEAD
             'category_id' => ['required'],
             'title' => ['required', 'string'],
             'category_img' => ['sometimes', 'image', 'mimes:png,jpg,jpeg,gif', 'max:2048'],
@@ -32,9 +31,6 @@ class ProductRequest extends FormRequest
             'rating' => ['required', 'numeric'],
             'short_description' => ['required', 'string'],
             'long_description' => ['required', 'string'],
-=======
-            '' => '',
->>>>>>> c28d0c883365f98345e844756e93d5dd128c2337
         ];
     }
 }
