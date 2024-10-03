@@ -11,7 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Product extends Model implements HasMedia
 {
-<<<<<<< HEAD
+
     use HasFactory, InteractsWithMedia, HasSlug;
     protected $guarded  = [];
 
@@ -32,18 +32,4 @@ class Product extends Model implements HasMedia
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
-=======
-    use HasFactory;
-    protected $fillable = [
-        'category_id',
-        'title',
-        'slug',
-        'price',
-        'quantity',
-        'sku',
-        'rating',
-        'short_description',
-        'long_description',
-    ];
->>>>>>> c28d0c883365f98345e844756e93d5dd128c2337
 }
