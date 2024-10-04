@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\ProductRepositoryInterface;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -13,6 +14,17 @@ class ProductRepository implements ProductRepositoryInterface
     public function __construct(protected Product $model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * Get all product
+     */
+    public function getAllProduct(array $relationshipNames = [], string $collectionNames): Collection
+    {
+        // return $this->model::with($relationshipNames)->get();
+        return $this->model::when($relationshipNames, function ($query) use ($relationshipNames) {
+            $query->with($relationshipNames);
+        })->get();
     }
 
     public function createNewProduct(array $productDetails): Product

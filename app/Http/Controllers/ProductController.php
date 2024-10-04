@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Interfaces\ProductRepositoryInterface;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +25,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = $this->productRepository->getAllProduct(['media', 'category'], ' ');
+        return Response::sendResponse('All Products', ['products' => ProductResource::collection($products)], 200);
     }
 
     /**

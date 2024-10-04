@@ -25,7 +25,7 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = $this->categoryRepository->getAllCategories('media', 'category_images');
+        $categories = $this->categoryRepository->getAllCategories(['media'], 'category_images');
         return Response::sendResponse('All categories', ['categories' => CategoryResource::collection($categories)], 200);
     }
 

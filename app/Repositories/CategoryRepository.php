@@ -19,13 +19,11 @@ class CategoryRepository implements CategoryRepositoryInterface
     /**
      * Find all categories
      */
-    public function getAllCategories(?string $relationNames, ?string $collectionNames): Collection
+    public function getAllCategories(?array $relationNames, ?string $collectionNames): Collection
     {
-        return $this->model::whereHas($relationNames, function ($query) use ($collectionNames) {
-            $query->where('collection_name', $collectionNames);
-        })
-            ->with($relationNames)
-            ->get();
+        return $this->model::when($relationNames, function ($query) use ($relationNames) {
+            $query->with($relationNames);
+        })->get();
     }
 
     /**

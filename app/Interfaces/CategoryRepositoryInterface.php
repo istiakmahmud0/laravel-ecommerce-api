@@ -11,7 +11,7 @@ interface CategoryRepositoryInterface
     /**
      * Find all categories
      */
-    public function getAllCategories(?string $relationNames, ?string $collectionNames): Collection;
+    public function getAllCategories(?array $relationNames, ?string $collectionNames): Collection;
 
     /**
      * Create categories
