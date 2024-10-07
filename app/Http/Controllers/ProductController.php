@@ -25,7 +25,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = $this->productRepository->getAllProduct(['media', 'category'], ' ');
+        $products = $this->productRepository->getAllProduct(['media', 'category']);
         return Response::sendResponse('All Products', ['products' => ProductResource::collection($products)], 200);
     }
 
@@ -51,9 +51,12 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug): JsonResponse
     {
-        //
+
+        $product = $this->productRepository->getSingleProductBySlug($slug, ['media', 'category']);
+        // dd($product);
+        return Response::sendResponse('Single Product', ['product' => new ProductResource($product)], 200);
     }
 
     /**
