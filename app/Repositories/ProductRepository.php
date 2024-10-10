@@ -40,4 +40,29 @@ class ProductRepository implements ProductRepositoryInterface
         $product = $this->model->query();
         return $product->with($relationshipNames)->where('slug', $slug)->firstOrFail();
     }
+
+    /**
+     * Get single product by it's ID
+     */
+    public function getSingleProductByID(string $id, array $relationshipNames): Product
+    {
+        $product = $this->model->query();
+        return $product->with($relationshipNames)->findOrFail($id);
+    }
+
+    /**
+     * Update Product
+     */
+    public function updateProduct(object $product, array $newDetails): bool
+    {
+        return $product->update($newDetails);
+    }
+
+    /**
+     * Update Product
+     */
+    public function deleteProduct(object $product): bool
+    {
+        return $product->delete();
+    }
 }
