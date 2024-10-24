@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Interfaces\ProductRepositoryInterface;
+use App\Models\Product;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -60,19 +61,19 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProductRequest $request, string $id)
     {
-        //
+        $product = $this->productRepository->getSingleProductByID($id);
+        if ($product instanceof Product) {
+            $this->productRepository->updateProduct($product, $request->validated());
+        }
+        if ($request->hasFile('product_img')) {
+            $product->clearMediaCollection();
+            $media = $product->addMediaFromRequest('product_img')->toMediaCollection('product_images');
+        }
+        return Response::sendResponse('Product updated successfully', ['product' => new ProductResource($product)], 201);
     }
 
     /**
@@ -80,6 +81,10 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = $this->productRepository->getSingleProductByID($id);
+        if ($product instanceof Product) {
+            $this->productRepository->deleteProduct($product);
+        }
+        return Response::sendResponse('Product deleted successfully', [], 200);
     }
 }

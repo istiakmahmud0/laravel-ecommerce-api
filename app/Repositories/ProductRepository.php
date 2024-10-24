@@ -44,7 +44,7 @@ class ProductRepository implements ProductRepositoryInterface
     /**
      * Get single product by it's ID
      */
-    public function getSingleProductByID(string $id, array $relationshipNames): Product
+    public function getSingleProductByID(string $id, ?array $relationshipNames = []): Product
     {
         $product = $this->model->query();
         return $product->with($relationshipNames)->findOrFail($id);

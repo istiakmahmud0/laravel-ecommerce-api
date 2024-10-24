@@ -25,7 +25,7 @@ interface ProductRepositoryInterface
     /**
      * Get single product by it's ID
      */
-    public function getSingleProductByID(string $id, array $relationshipNames): Product;
+    public function getSingleProductByID(string $id, ?array $relationshipNames = []): Product;
 
     /**
      * Update Product
