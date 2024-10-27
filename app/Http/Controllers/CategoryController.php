@@ -25,7 +25,7 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = $this->categoryRepository->getAllCategories(['media'], 'category_images');
+        $categories = $this->categoryRepository->getAllCategories(['media', 'products'], 'category_images');
         return Response::sendResponse('All categories', ['categories' => CategoryResource::collection($categories)], 200);
     }
 
@@ -50,7 +50,7 @@ class CategoryController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $category = $this->categoryRepository->getCategoryById($id, ['media']);
+        $category = $this->categoryRepository->getCategoryById($id, ['media', 'products']);
         return Response::sendResponse('Single category', ['category' => new CategoryResource($category)], 200);
     }
 

@@ -17,4 +17,9 @@ class Category extends Model implements HasMedia
         $this->addMediaCollection('category_images')
             ->singleFile(); // Only one image per category, remove if you want multiple images
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
