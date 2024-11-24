@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Interfaces\AttributeKeyRepositoryInterface;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Interfaces\CategoryRepositoryInterface;
 use App\Interfaces\ProductRepositoryInterface;
+use App\Repositories\AttributeKeyRepository;
 use App\Repositories\AuthRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ProductRepository;
@@ -21,6 +23,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(AttributeKeyRepositoryInterface::class, AttributeKeyRepository::class);
     }
 
     /**
